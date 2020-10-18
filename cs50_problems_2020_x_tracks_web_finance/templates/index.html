@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <table>
+        <thead>
+            <tr>
+                <th class="thead">Symbol</th>
+                <th class="thead">Name</th>
+                <th class="thead">Shares</th>
+                <th class="thead">Price</th>
+                <th class="thead">TOTAL</th>
+            </tr>
+        </thead>
+
+        <tfoot>
+            <tr>
+                <td class="tfoot" colspan="4"></td>
+                <td class="tfoot">{{ user_equity }}</td>
+            </tr>
+        </tfoot>
+
+        <tbody>
+            {% for stock in user_stocks %}
+            
+            <tr>
+                <td class="tbody">{{ stock["symbol"] }}</td>
+                <td class="tbody">{{ stock["name"] }}</td>
+                <td class="tbody">{{ stock["shares"] }}</td>
+                <td class="tbody">{{ stock["price"] }}</td>
+                <td class="tbody">{{ stock["total"] }}</td>
+            </tr>
+            {% endfor %}
+             <tr>
+                <td class="tbody" colspan="4">CASH</td>
+                <td class="tbody">{{ user_cash }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

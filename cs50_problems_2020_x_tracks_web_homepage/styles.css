@@ -1,0 +1,56 @@
+/* Container for flexboxes */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.main {
+  display: -webkit-flex;
+  display: flex;
+  min-height: 100%;
+}
+
+/* Style the navigation menu */
+nav {
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  background-color: #ccffcc;
+  padding: 100px;
+ }
+
+footer {
+  position: fixed;
+  left: 100px;
+  bottom: 100px;
+  background-color: #ccffcc;
+  text-align: left;
+}
+
+/* Style the content */
+.content {
+  -webkit-flex: 3;
+  -ms-flex: 3;
+  flex: 3;
+  background-color: #ffccff;
+  padding: 100px;
+}
+
+.album {
+  width: 20%;
+  float: left;
+  padding: 7px;
+  padding-left: 10px;
+  display: block;
+}
+
+img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+img:hover {
+  transform: scale(2.5,2.5);
+  transition: .3s transform;
+
+}

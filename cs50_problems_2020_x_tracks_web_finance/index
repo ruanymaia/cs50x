@@ -1,0 +1,98 @@
+def index():
+    """Show portfolio of stocks"""
+
+    user_id = session.get("user_id")
+    user_transactions = db.execute("SELECT symbol, sum(shares) shares FROM transactions WHERE user_id = :user_id GROUP BY symbol",
+                                  user_id=user_id)
+
+    user_stocks = []
+    for transaction in user_transactions:
+
+        transaction_dict = {}
+
+        quote = lookup(transaction["symbol"])
+
+        transaction_dict["symbol"] = transaction["symbol"]
+        transaction_dict["name"] = quote["name"]
+        transaction_dict["shares"] = transaction["shares"]
+        transaction_dict["price"] = quote["price"]
+        transaction_dict["total"] = transaction["shares"] * quote["price"]
+
+        user_stocks.append(transaction_dict)
+
+
+    user_data = db.execute("SELECT cash FROM users WHERE id = :user_id",
+                                user_id=user_id)
+
+    # Extract user available cash
+    user_cash = user_data[0]["cash"]
+
+    # Calculate user equity
+    user_equity = user_cash
+    for stock in user_stocks:
+        user_equity += stock["total"]
+
+    # Format values as USD
+    for stock in user_stocks:
+        stock["price"] = usd(stock["price"])
+        stock["total"] = usd(stock["total"])
+    user_cash = usd(user_cash)
+    user_equity = usd(user_equity)
+
+    return render_template("/index.html", user_stocks=user_stocks, user_cash=user_cash, user_equity=user_equity)
+
+def index():
+    """Show portfolio of stocks"""
+
+    SELECT symbol, SUM(CASE WHEN buy = 1 THEN shares ELSE -1 * shares END) shares FROM transactions WHERE user_id = 2 GROUP BY symbol;
+
+    user_id = session.get("user_id")
+    buy_transactions = db.execute("SELECT symbol, sum(shares) shares FROM transactions WHERE user_id = :user_id AND buy = :true GROUP BY symbol",
+                                  user_id=user_id, true=1)
+    sell_transactions = db.execute("SELECT symbol, sum(shares) shares FROM transactions WHERE user_id = :user_id AND sell = :true GROUP BY symbol",
+                                  user_id=user_id, true=1)
+
+    user_stocks = []
+    for buy in buy_transactions:
+        buy_dict = {}
+        quote = lookup(buy["symbol"])
+        buy_dict["symbol"] = buy["symbol"]
+        buy_dict["name"] = quote["name"]
+        buy_dict["shares"] = buy["shares"]
+        buy_dict["price"] = quote["price"]
+        buy_dict["total"] = buy["shares"] * quote["price"]
+        user_stocks.append(buy_dict)
+
+    sold_stocks = []
+    for sell in sell_transactions:
+        sell_dict = {}
+        sell_dict["symbol"] = buy["symbol"]
+        sell_dict["shares"] = buy["shares"]
+        sold_stocks.append(sell_dict)
+
+    for sell_dict in sold_stocks:
+        for buy_dict in user_stocks:
+            if buy_dict["symbol"] == sell_dict["symbol"]:
+                buy_dict["shares"] = buy_dict["shares"] - sell_dict["shares"]
+                #if buy_dict["shares"] == 0:
+                #    user_stocks.remove(buy_dict)
+
+    user_data = db.execute("SELECT cash FROM users WHERE id = :user_id",
+                                user_id=user_id)
+
+    # Extract user available cash
+    user_cash = user_data[0]["cash"]
+
+    # Calculate user equity
+    user_equity = user_cash
+    for stock in user_stocks:
+        user_equity += stock["total"]
+
+    # Format values as USD
+    for stock in user_stocks:
+        stock["price"] = usd(stock["price"])
+        stock["total"] = usd(stock["total"])
+    user_cash = usd(user_cash)
+    user_equity = usd(user_equity)
+
+    return render_template("/index.html", user_stocks=user_stocks, user_cash=user_cash, user_equity=user_equity)
